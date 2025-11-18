@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TIKGenerator", "TIKGenerator\TIKGenerator.csproj", "{219E1679-E10B-45B9-A472-1FD3C6965A1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC0856B8-6556-4B7C-82C9-8081FFC79442}
+	EndGlobalSection
+EndGlobal
