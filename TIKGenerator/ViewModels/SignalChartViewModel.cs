@@ -2,6 +2,7 @@
 using LiveChartsCore.SkiaSharpView;
 using System;
 using System.ComponentModel;
+using TIKGenerator.Models;
 
 namespace TIKGenerator.ViewModels
 {
@@ -20,7 +21,7 @@ namespace TIKGenerator.ViewModels
         }
 
         public void GenerateSignal(double amplitude, double frequency, double phase,
-                                   int points, double tStart, double tEnd, string type)
+                                   int points, double tStart, double tEnd, SignalType type)
         {
             double[] data = new double[points];
             double dt = (tEnd - tStart) / (points - 1);
@@ -30,16 +31,16 @@ namespace TIKGenerator.ViewModels
                 double t = tStart + i * dt;
                 switch (type)
                 {
-                    case "Синусоида":
+                    case SignalType.SineWave:
                         data[i] = amplitude * Math.Sin(2 * Math.PI * frequency * t + phase);
                         break;
-                    case "Меандр":
+                    case SignalType.Meander:
                         data[i] = amplitude * (Math.Sin(2 * Math.PI * frequency * t + phase) >= 0 ? 1 : -1);
                         break;
-                    case "Треугольный":
+                    case SignalType.Triangular:
                         data[i] = 2 * amplitude / Math.PI * Math.Asin(Math.Sin(2 * Math.PI * frequency * t + phase));
                         break;
-                    case "Пилообразный":
+                    case SignalType.Sawtooth:
                         data[i] = 2 * amplitude * (t * frequency - Math.Floor(t * frequency + 0.5));
                         break;
                 }

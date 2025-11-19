@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="TIKGenerator.Views.Components.NavigationPanel.NavigationPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="NavigationPanelStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical" Background="#EEE" Height="Auto" Style="{StaticResource NP_PanelStyle}">
+        <Button 
+            x:Name="BtnGenerator" 
+            Content="{DynamicResource BtnGenerateSignals}" 
+            Style="{StaticResource NP_ButtonStyle}" 
+            Tag="GeneratorPage"
+            Click="Btn_Click"
+            />
+        <Button 
+            x:Name="BtnHistory" 
+            Content="{DynamicResource BtnHistory}" 
+            Style="{StaticResource NP_ButtonStyle}" 
+            Tag="HistoryPage"
+            Click="Btn_Click"
+            />
+        <Button 
+            x:Name="BtnExport" 
+            Content="{DynamicResource BtnExport}" 
+            Style="{StaticResource NP_ButtonStyle}" 
+            Tag="ExportPage"
+            Click="Btn_Click"
+            />
+        <Button 
+            x:Name="BtnImport" 
+            Content="{DynamicResource BtnImport}" 
+            Style="{StaticResource NP_ButtonStyle}" 
+            Tag="ImportPage"
+            Click="Btn_Click"
+            />
+    </StackPanel>
+</UserControl>

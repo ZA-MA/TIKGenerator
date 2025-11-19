@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Amplitude">Амплитуда</sys:String>
+    <sys:String x:Key="Frequency">Частота</sys:String>
+    <sys:String x:Key="Phase">Фаза</sys:String>
+    <sys:String x:Key="Points">Количество точек</sys:String>
+    <sys:String x:Key="TimeStart">Время начала</sys:String>
+    <sys:String x:Key="TimeEnd">Время окончания</sys:String>
+    <sys:String x:Key="SignalType">Тип сигнала</sys:String>
+
+    <sys:String x:Key="SineWave">Синусоида</sys:String>
+    <sys:String x:Key="Meander">Меандр</sys:String>
+    <sys:String x:Key="Triangular">Треугольный</sys:String>
+    <sys:String x:Key="Sawtooth">Пилообразный</sys:String>
+
+    <sys:String x:Key="Generate">Сгенерировать</sys:String>
+    <sys:String x:Key="Clear">Очистить</sys:String>
+
+
+    <sys:String x:Key="BtnGenerateSignals">Генерация сигналов</sys:String>
+    <sys:String x:Key="BtnHistory">История сигналов</sys:String>
+    <sys:String x:Key="BtnExport">Экспорт</sys:String>
+    <sys:String x:Key="BtnImport">Импорт</sys:String>
+    
+</ResourceDictionary>

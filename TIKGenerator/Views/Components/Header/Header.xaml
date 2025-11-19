@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="TIKGenerator.Views.Components.Header.Header"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sel="clr-namespace:TIKGenerator.Views.Components.LanguageSelector">
+
+    <Grid Background="#0C92A1" Height="50">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="TIK Generator"
+                   Foreground="White"
+                   FontSize="22"
+                   VerticalAlignment="Center"
+                   Margin="15,0"/>
+
+        <sel:LanguageSelector Grid.Column="1"
+                              Margin="0 0 15 0"/>
+    </Grid>
+
+</UserControl>

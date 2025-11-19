@@ -4,14 +4,15 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using TIKGenerator.ViewModels;
+using TIKGenerator.Models;
 
-namespace TIKGenerator.Views
+namespace TIKGenerator.Views.Pages
 {
-    public partial class SignalChartPage : Page
+    public partial class GeneratorPage : Page
     {
         private SignalChartViewModel Chart;
 
-        public SignalChartPage()
+        public GeneratorPage()
         {
             InitializeComponent();
 
@@ -32,7 +33,7 @@ namespace TIKGenerator.Views
                 int points = int.Parse(PointsBox.Text);
                 double tStart = double.Parse(TimeStartBox.Text);
                 double tEnd = double.Parse(TimeEndBox.Text);
-                string type = (SignalTypeBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                SignalType type = (SignalType)((ComboBoxItem)SignalTypeBox.SelectedItem).Tag;
 
                 Chart.GenerateSignal(amplitude, frequency, phase, points, tStart, tEnd, type);
             }

@@ -4,9 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TIKGenerator"
+        xmlns:header="clr-namespace:TIKGenerator.Views.Components.Header"
+        xmlns:nav="clr-namespace:TIKGenerator.Views.Components.NavigationPanel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <header:Header Grid.Row="0" Grid.ColumnSpan="2"/>
+        <nav:NavigationPanel x:Name="Nav" Grid.Row="1"/>
+
+        
+        <Frame Grid.Row="1"
+               Grid.Column="1"
+               x:Name="MainFrame"
+               NavigationUIVisibility="Hidden"/>
+
     </Grid>
 </Window>

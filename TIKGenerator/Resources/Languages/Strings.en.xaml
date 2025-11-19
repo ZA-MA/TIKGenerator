@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Amplitude">Amplitude</sys:String>
+    <sys:String x:Key="Frequency">Frequency</sys:String>
+    <sys:String x:Key="Phase">Phase</sys:String>
+    <sys:String x:Key="Points">Points</sys:String>
+    <sys:String x:Key="TimeStart">Start Time</sys:String>
+    <sys:String x:Key="TimeEnd">End Time</sys:String>
+    <sys:String x:Key="SignalType">Signal Type</sys:String>
+
+    <sys:String x:Key="SineWave">Sine Wave</sys:String>
+    <sys:String x:Key="Meander">Square Wave</sys:String>
+    <sys:String x:Key="Triangular">Triangular</sys:String>
+    <sys:String x:Key="Sawtooth">Sawtooth</sys:String>
+
+    <sys:String x:Key="Generate">Generate</sys:String>
+    <sys:String x:Key="Clear">Clear</sys:String>
+
+
+    <sys:String x:Key="BtnGenerateSignals">Generate Signals</sys:String>
+    <sys:String x:Key="BtnHistory">Signal History</sys:String>
+    <sys:String x:Key="BtnExport">Export</sys:String>
+    <sys:String x:Key="BtnImport">Import</sys:String>
+</ResourceDictionary>
