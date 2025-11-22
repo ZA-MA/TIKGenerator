@@ -10,11 +10,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc1" />
+	  <None Remove="appsettings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Services\" />
+	  <Content Include="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc1" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.11" />
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.11" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.11" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.11" />
 	</ItemGroup>
 
 </Project>

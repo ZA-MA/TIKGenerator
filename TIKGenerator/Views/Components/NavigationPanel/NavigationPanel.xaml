@@ -5,7 +5,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="NavigationPanelStyles.xaml"/>
+                <ResourceDictionary Source="NavigationPanelStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -23,20 +23,6 @@
             Content="{DynamicResource BtnHistory}" 
             Style="{StaticResource NP_ButtonStyle}" 
             Tag="HistoryPage"
-            Click="Btn_Click"
-            />
-        <Button 
-            x:Name="BtnExport" 
-            Content="{DynamicResource BtnExport}" 
-            Style="{StaticResource NP_ButtonStyle}" 
-            Tag="ExportPage"
-            Click="Btn_Click"
-            />
-        <Button 
-            x:Name="BtnImport" 
-            Content="{DynamicResource BtnImport}" 
-            Style="{StaticResource NP_ButtonStyle}" 
-            Tag="ImportPage"
             Click="Btn_Click"
             />
     </StackPanel>

@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:String x:Key="AddSignal">Добавить сигнал</sys:String>
+    <sys:String x:Key="Cancel">Отменить</sys:String>
+
+    <sys:String x:Key="Name">Название</sys:String>
     <sys:String x:Key="Amplitude">Амплитуда</sys:String>
     <sys:String x:Key="Frequency">Частота</sys:String>
     <sys:String x:Key="Phase">Фаза</sys:String>

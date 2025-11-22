@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="TIKGenerator.Views.Components.InputField.InputField"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TIKGenerator.Views.Components.InputField"
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./InputFieldStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Margin="0" Style="{StaticResource InputField_Container}" Width="Auto">
+        <TextBlock 
+            Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+            Style="{StaticResource InputField_Label}"
+            />
+
+        <TextBox 
+            Text="{Binding TextValue, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" 
+            Style="{StaticResource InputField_TextBox}"
+            PreviewTextInput="TextBox_PreviewTextInput"
+        />
+
+        <TextBlock 
+            Text="{Binding Error, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+            Style="{StaticResource InputField_ErrorText}"
+            />
+    </StackPanel>
+</UserControl>

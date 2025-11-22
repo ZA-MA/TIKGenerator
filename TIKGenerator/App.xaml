@@ -6,8 +6,12 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Languages/Strings.ru.xaml"/>
-                <ResourceDictionary Source="Resources/Languages/Strings.en.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/ComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/CheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/RadioButtonStyle.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

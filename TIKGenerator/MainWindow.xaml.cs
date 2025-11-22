@@ -20,12 +20,9 @@ namespace TIKGenerator
             InitializeComponent();
 
             MainFrame.Content = new GeneratorPage();
-            Nav.SetActiveNavButton("GeneratorPage");
 
             Nav.NavigateGenerator += (s, e) => MainFrame.Content = new GeneratorPage();
             Nav.NavigateHistory += (s, e) => MainFrame.Content = new HistoryPage();
-            Nav.NavigateExport += (s, e) => MainFrame.Content = new ExportPage();
-            Nav.NavigateImport += (s, e) => MainFrame.Content = new ImportPage();
         }
     }
 }

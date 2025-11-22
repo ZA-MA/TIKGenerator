@@ -32,8 +32,6 @@ namespace TIKGenerator.Views.Components.NavigationPanel
             {
                 case "GeneratorPage": NavigateGenerator?.Invoke(btn, e); break;
                 case "HistoryPage": NavigateHistory?.Invoke(btn, e); break;
-                case "ExportPage": NavigateExport?.Invoke(btn, e); break;
-                case "ImportPage": NavigateImport?.Invoke(btn, e); break;
             }
         }
 

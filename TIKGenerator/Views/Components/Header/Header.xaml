@@ -15,8 +15,7 @@
                    VerticalAlignment="Center"
                    Margin="15,0"/>
 
-        <sel:LanguageSelector Grid.Column="1"
-                              Margin="0 0 15 0"/>
+        <sel:LanguageSelector Grid.Column="1" Margin="0 0 15 0"/>
     </Grid>
 
 </UserControl>

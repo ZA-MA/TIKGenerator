@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36401.2 d17.14
+VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TIKGenerator", "TIKGenerator\TIKGenerator.csproj", "{219E1679-E10B-45B9-A472-1FD3C6965A1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TIKGenerator.Tests", "TIKGenerator.Tests\TIKGenerator.Tests.csproj", "{509F57A4-2FB4-474F-9811-86DC7B833F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{219E1679-E10B-45B9-A472-1FD3C6965A1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{509F57A4-2FB4-474F-9811-86DC7B833F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{509F57A4-2FB4-474F-9811-86DC7B833F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{509F57A4-2FB4-474F-9811-86DC7B833F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{509F57A4-2FB4-474F-9811-86DC7B833F50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
