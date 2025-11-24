@@ -16,4 +16,4 @@
 
 ---
 
-![Демонстрация](https://drive.google.com/file/d/1UCQE26-oV9j7SyO6NWiVf6KLxNzpjCf2/view?usp=sharing)
+![Демонстрация](https://drive.google.com/file/d/1UCQE26-oV9j7SyO6NWiVf6KLxNzpjCf2/view)
