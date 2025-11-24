@@ -2,10 +2,14 @@
 using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 using TIKGenerator.Data;
 using TIKGenerator.Services;
 using TIKGenerator.ViewModels;
+using Serilog;
+using Serilog.Extensions.Logging;
+using System.IO;
 
 namespace TIKGenerator
 {
@@ -41,7 +45,22 @@ namespace TIKGenerator
 
             SetLanguage("ru");
 
-            var groupService = new SignalGroupService(DbOptions);
+            var logFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+            if (!Directory.Exists(logFolder))
+            {
+                Directory.CreateDirectory(logFolder);
+            }
+
+            var logPath = Path.Combine(logFolder, "log.txt");
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            var loggerFactory = new LoggerFactory().AddSerilog();
+            var groupLogger = loggerFactory.CreateLogger<SignalGroupService>();
+
+            var groupService = new SignalGroupService(DbOptions, groupLogger);
 
             GeneratorVm = new GeneratorViewModel(
                 new SignalGeneratorService(),

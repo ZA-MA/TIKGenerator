@@ -20,7 +20,7 @@
             />
         <Button 
             x:Name="BtnHistory" 
-            Content="{DynamicResource BtnHistory}" 
+            Content="{DynamicResource HistorySignals}" 
             Style="{StaticResource NP_ButtonStyle}" 
             Tag="HistoryPage"
             Click="Btn_Click"

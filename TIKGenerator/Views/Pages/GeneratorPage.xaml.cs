@@ -3,6 +3,7 @@ using LiveChartsCore.SkiaSharpView;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using TIKGenerator.Helpers;
 using TIKGenerator.Models;
 using TIKGenerator.Services;
 using TIKGenerator.ViewModels;
@@ -22,7 +23,11 @@ namespace TIKGenerator.Views.Pages
             Vm = App.GeneratorVm;
             DataContext = Vm;
 
-            
+            SignalProcessing.VM.ProcessingApplied += model =>
+            {
+                Vm.ApplyProcessing(model);
+            };
+
             if (group != null)
                 LoadGroup(group);
         }
@@ -82,7 +87,7 @@ namespace TIKGenerator.Views.Pages
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Vm.SignalGroup == null || string.IsNullOrEmpty(Vm.SignalGroup.Id))
+            if (Vm.SignalGroup.Name == null)
             {
                 var window = new SaveSignalGroup();
                 if (window.ShowDialog() != true) return;

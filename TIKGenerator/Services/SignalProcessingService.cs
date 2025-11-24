@@ -1,165 +1,110 @@
-﻿using MathNet.Numerics.IntegralTransforms;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using TIKGenerator.Models;
+using MathNet.Numerics;
+using MathNet.Numerics.IntegralTransforms;
 
 namespace TIKGenerator.Services
 {
     public interface ISignalProcessingService
     {
-        double[] ProcessSignal(double[] signal, SignalProcessingOptions options, double samplingRate);
+        double[] ProcessSignal(double[] signal, SignalProcessingModel model, double sampleRate);
 
         double[] ApplyNone(double[] signal);
-
-        double[] ApplyLowPass(double[] signal, double cutoffHz, double samplingRate);
-        double[] ApplyHighPass(double[] signal, double cutoffHz, double samplingRate);
-        double[] ApplyBandPass(double[] signal, double lowHz, double highHz, double samplingRate);
-        double[] ApplyBandStop(double[] signal, double lowHz, double highHz, double samplingRate);
-
+        double[] ApplyLowPass(double[] signal, double cutoffHz, double sampleRate);
+        double[] ApplyHighPass(double[] signal, double cutoffHz, double sampleRate);
+        double[] ApplyBandPass(double[] signal, double lowHz, double highHz, double sampleRate);
+        double[] ApplyBandStop(double[] signal, double lowHz, double highHz, double sampleRate);
         double[] ApplyMovingAverage(double[] signal, int window);
         double[] ApplyExponentialSmoothing(double[] signal, double alpha);
-
-        double[] ApplyFFTFilter(double[] signal, double lowHz, double highHz, double samplingRate);
+        double[] ApplyFFT(double[] signal, double sampleRate);
+        double[] ApplyNormalization(double[] signal);
+        double[] ApplyOverlay(double[][] signals);
     }
 
     public class SignalProcessingService : ISignalProcessingService
     {
-        public double[] ProcessSignal(double[] signal, SignalProcessingOptions options, double samplingRate)
+        public double[] ProcessSignal(double[] signal, SignalProcessingModel model, double sampleRate)
         {
-            if (signal == null || signal.Length == 0)
-                return signal;
+            if (signal == null || signal.Length == 0) return signal;
 
-            double[] result = options.SelectedProcessingType switch
+            return model.SelectedMethod switch
             {
-                SignalProcessingType.None => ApplyNone(signal),
-                SignalProcessingType.LowPass when options.LowPassCutoff is double lp => ApplyLowPass(signal, lp, samplingRate),
-                SignalProcessingType.HighPass when options.HighPassCutoff is double hp => ApplyHighPass(signal, hp, samplingRate),
-                SignalProcessingType.BandPass when options.BandPassLow is double bpl && options.BandPassHigh is double bph => ApplyBandPass(signal, bpl, bph, samplingRate),
-                SignalProcessingType.BandStop when options.BandStopLow is double bsl && options.BandStopHigh is double bsh => ApplyBandStop(signal, bsl, bsh, samplingRate),
-                SignalProcessingType.MovingAverage when options.MovingAverageWindow is int win => ApplyMovingAverage(signal, win),
-                SignalProcessingType.ExponentialSmoothing when options.ExponentialAlpha is double alpha => ApplyExponentialSmoothing(signal, alpha),
+                ProcessingMethod.None => ApplyNone(signal),
+                ProcessingMethod.LowPass when model.LowPassCutoff.HasValue => ApplyLowPass(signal, model.LowPassCutoff.Value, sampleRate),
+                ProcessingMethod.HighPass when model.HighPassCutoff.HasValue => ApplyHighPass(signal, model.HighPassCutoff.Value, sampleRate),
+                ProcessingMethod.BandPass when model.BandPassLow.HasValue && model.BandPassHigh.HasValue => ApplyBandPass(signal, model.BandPassLow.Value, model.BandPassHigh.Value, sampleRate),
+                ProcessingMethod.BandStop when model.BandStopLow.HasValue && model.BandStopHigh.HasValue => ApplyBandStop(signal, model.BandStopLow.Value, model.BandStopHigh.Value, sampleRate),
+                ProcessingMethod.MovingAverage when model.MovingAverageWindow.HasValue => ApplyMovingAverage(signal, model.MovingAverageWindow.Value),
+                ProcessingMethod.ExponentialSmoothing when model.ExponentialAlpha.HasValue => ApplyExponentialSmoothing(signal, model.ExponentialAlpha.Value),
+                ProcessingMethod.FFT => ApplyFFT(signal, sampleRate),
+                ProcessingMethod.Normalization => ApplyNormalization(signal),
                 _ => signal
             };
-
-            return result;
         }
 
         public double[] ApplyNone(double[] signal) => signal;
 
-        public double[] ApplyLowPass(double[] signal, double cutoffHz, double samplingRate)
+        public double[] ApplyLowPass(double[] signal, double cutoffHz, double sampleRate)
         {
-            int n = signal.Length;
-            if (n == 0) return signal;
+            if (signal == null || signal.Length == 0) return signal;
 
-            double[] result = new double[n];
+            double[] result = new double[signal.Length];
+            double rc = 1.0 / (2 * Math.PI * cutoffHz);
+            double dt = 1.0 / sampleRate;
+            double alpha = dt / (rc + dt);
 
-            cutoffHz = Math.Max(0.001, Math.Min(cutoffHz, samplingRate / 2.1));
-
-            double wc = 2.0 * Math.PI * cutoffHz;
-            double T = 1.0 / samplingRate;
-            double wcT = wc * T;
-
-            double k = Math.Tan(wcT / 2.0);
-            double k2 = k * k;
-            double sqrt2 = Math.Sqrt(2);
-
-            double norm = 1.0 / (1.0 + sqrt2 * k + k2);
-            double b0 = k2 * norm;
-            double b1 = 2.0 * b0;
-            double b2 = b0;
-            double a1 = 2.0 * (k2 - 1.0) * norm;
-            double a2 = (1.0 - sqrt2 * k + k2) * norm;
-
-            double x1 = 0, x2 = 0;
-            double y1 = 0, y2 = 0;
-
-            for (int i = 0; i < n; i++)
+            result[0] = signal[0];
+            for (int i = 1; i < signal.Length; i++)
             {
-                double x0 = signal[i];
-
-                double y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
-
-                result[i] = y0;
-
-                x2 = x1;
-                x1 = x0;
-                y2 = y1;
-                y1 = y0;
+                result[i] = alpha * signal[i] + (1 - alpha) * result[i - 1];
             }
-
             return result;
         }
 
-        public double[] ApplyHighPass(double[] signal, double cutoffHz, double samplingRate)
+        public double[] ApplyHighPass(double[] signal, double cutoffHz, double sampleRate)
         {
-            int n = signal.Length;
-            if (n == 0) return signal;
+            if (signal == null || signal.Length == 0) return signal;
 
-            double[] result = new double[n];
+            double[] result = new double[signal.Length];
+            double rc = 1.0 / (2 * Math.PI * cutoffHz);
+            double dt = 1.0 / sampleRate;
+            double alpha = rc / (rc + dt);
 
-            cutoffHz = Math.Max(0.001, Math.Min(cutoffHz, samplingRate / 2.1));
-
-            double wc = 2.0 * Math.PI * cutoffHz;
-            double T = 1.0 / samplingRate;
-            double wcT = wc * T;
-
-            double k = Math.Tan(wcT / 2.0);
-            double k2 = k * k;
-            double sqrt2 = Math.Sqrt(2);
-
-            double norm = 1.0 / (1.0 + sqrt2 * k + k2);
-            double b0 = 1.0 * norm;
-            double b1 = -2.0 * b0;
-            double b2 = b0;
-            double a1 = 2.0 * (k2 - 1.0) * norm;
-            double a2 = (1.0 - sqrt2 * k + k2) * norm;
-
-            double x1 = 0, x2 = 0;
-            double y1 = 0, y2 = 0;
-
-            for (int i = 0; i < n; i++)
+            result[0] = signal[0];
+            for (int i = 1; i < signal.Length; i++)
             {
-                double x0 = signal[i];
-                double y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
-
-                result[i] = y0;
-
-                x2 = x1;
-                x1 = x0;
-                y2 = y1;
-                y1 = y0;
+                result[i] = alpha * (result[i - 1] + signal[i] - signal[i - 1]);
             }
-
             return result;
         }
 
-        public double[] ApplyBandPass(double[] signal, double lowHz, double highHz, double samplingRate)
+
+        public double[] ApplyBandPass(double[] signal, double lowHz, double highHz, double sampleRate)
         {
-            double[] lowPassed = ApplyLowPass(signal, highHz, samplingRate);
-            return ApplyHighPass(lowPassed, lowHz, samplingRate);
+            if (signal == null || signal.Length == 0) return signal;
+            if (lowHz >= highHz) throw new ArgumentException("Low frequency must be less than high frequency.");
+
+            var highPassed = ApplyHighPass(signal, lowHz, sampleRate);
+
+            var bandPassed = ApplyLowPass(highPassed, highHz, sampleRate);
+
+            return bandPassed;
         }
 
-        public double[] ApplyBandStop(double[] signal, double lowHz, double highHz, double samplingRate)
+        public double[] ApplyBandStop(double[] signal, double lowHz, double highHz, double sampleRate)
         {
-            int n = signal.Length;
-            if (n == 0) return signal;
+            if (signal == null || signal.Length == 0) return signal;
+            if (lowHz >= highHz) throw new ArgumentException("Low frequency must be less than high frequency.");
 
-            double[] result = new double[n];
+            var bandPass = ApplyBandPass(signal, lowHz, highHz, sampleRate);
 
-            double centerFreq = (lowHz + highHz) / 2.0;
-            double bandwidth = highHz - lowHz;
-
-            double[] bandPass = ApplyBandPass(signal, lowHz, highHz, samplingRate);
-
-            for (int i = 0; i < n; i++)
+            double[] result = new double[signal.Length];
+            for (int i = 0; i < signal.Length; i++)
             {
                 result[i] = signal[i] - bandPass[i];
             }
-
             return result;
         }
 
@@ -187,31 +132,48 @@ namespace TIKGenerator.Services
             return result;
         }
 
-        public double[] ApplyFFTFilter(double[] signal, double lowHz, double highHz, double samplingRate)
+        public double[] ApplyFFT(double[] signal, double sampleRate)
         {
-            int n = signal.Length;
-            Complex[] spectrum = new Complex[n];
-            for (int i = 0; i < n; i++)
-                spectrum[i] = new Complex(signal[i], 0);
+            if (signal == null || signal.Length == 0) return signal;
 
-            Fourier.Forward(spectrum, FourierOptions.Matlab);
+            Complex[] complexSignal = signal.Select(v => new Complex(v, 0)).ToArray();
 
-            double freqResolution = samplingRate / n;
-            for (int i = 0; i < n; i++)
+            Fourier.Forward(complexSignal, FourierOptions.Matlab);
+
+            double[] magnitude = new double[complexSignal.Length / 2];
+            for (int i = 0; i < magnitude.Length; i++)
             {
-                double freq = i * freqResolution;
-                if (freq > samplingRate / 2)
-                    freq = samplingRate - freq;
-
-                if (freq < lowHz || freq > highHz)
-                    spectrum[i] = Complex.Zero;
+                magnitude[i] = 2.0 / signal.Length * complexSignal[i].Magnitude;
             }
 
-            Fourier.Inverse(spectrum, FourierOptions.Matlab);
+            return magnitude;
+        }
 
-            double[] result = new double[n];
-            for (int i = 0; i < n; i++)
-                result[i] = spectrum[i].Real / n;
+        public double[] ApplyNormalization(double[] signal)
+        {
+            if (signal.Length == 0) return signal;
+            double max = signal.Max();
+            double min = signal.Min();
+            if (Math.Abs(max - min) < 1e-10) return signal;
+            return signal.Select(v => (v - min) / (max - min)).ToArray();
+        }
+
+        public double[] ApplyOverlay(double[][] signals)
+        {
+            if (signals == null || signals.Length == 0)
+                return Array.Empty<double>();
+
+            int length = signals[0].Length;
+            double[] result = new double[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                double sum = 0;
+                for (int s = 0; s < signals.Length; s++)
+                    sum += signals[s][i];
+
+                result[i] = sum;
+            }
 
             return result;
         }

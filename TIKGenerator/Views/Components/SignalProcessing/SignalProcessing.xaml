@@ -1,208 +1,151 @@
 ﻿<UserControl x:Class="TIKGenerator.Views.Components.SignalProcessing.SignalProcessing"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:TIKGenerator.Views.Components.SignalProcessing"
+             xmlns:models="clr-namespace:TIKGenerator.Models"
              Height="Auto" Width="Auto">
     <Grid Margin="5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Метод обработки:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <CheckBox Grid.Row="0" Grid.Column="1" Content="Использовать БПФ" 
-                  VerticalAlignment="Center" HorizontalAlignment="Left"
-                  ToolTip="Применять обработку через частотную область (БПФ → маска → обратное БПФ)"
-                  IsChecked="{Binding Processing.UseFFT, 
-                              RelativeSource={RelativeSource AncestorType=UserControl}, 
-                              Mode=TwoWay}" Style="{StaticResource CheckBoxStyle}"/>
-
-        <Button 
-            Grid.Row="0" Grid.Column="3"
-            Content="Применить"
-            Style="{StaticResource ButtonStyle}"
-            Height="20"
-            HorizontalAlignment="Right"
-            Margin="0"
-            Width="80" 
-            Command="{Binding Processing.ApplyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            />
-
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10,0,0">
-            <RadioButton Content="Нет" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsNoneSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
-            <RadioButton Content="ФНЧ" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsLowPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
-            <RadioButton Content="ФВЧ" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsHighPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
-            <RadioButton Content="Полосовой" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsBandPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="{DynamicResource ProcessingMethod}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Width="200"
+                  SelectedValue="{Binding Processing.SelectedMethod, Mode=TwoWay}"
+                  SelectedValuePath="Tag"
+                  Style="{StaticResource ComboBoxStyle}">
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.None}" Content="{DynamicResource None}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.LowPass}" Content="{DynamicResource LowPass}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.HighPass}" Content="{DynamicResource HighPass}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.BandPass}" Content="{DynamicResource BandPass}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.BandStop}" Content="{DynamicResource BandStop}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.MovingAverage}" Content="{DynamicResource MovingAverage}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.ExponentialSmoothing}" Content="{DynamicResource ExponentialSmoothing}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.FFT}" Content="{DynamicResource FFT}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.Normalization}" Content="{DynamicResource Normalization}" />
+                <ComboBoxItem Tag="{x:Static models:ProcessingMethod.Overlay}" Content="{DynamicResource Overlay}" />
+            </ComboBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,0">
-            <RadioButton Content="Режекторный" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsBandStopSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
-            <RadioButton Content="Скользящее среднее" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsMovingAverageSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Margin="0,0,15,0" Style="{StaticResource RadioButtonStyle}"/>
-            <RadioButton Content="Эксп. сглаживание" GroupName="Processing"
-                         IsChecked="{Binding Processing.IsExponentialSmoothingSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                         Style="{StaticResource RadioButtonStyle}"/>
-        </StackPanel>
+        <Button Grid.Row="0" Grid.Column="1" Content="{DynamicResource Apply}"
+                Width="80" Height="25"
+                Margin="10,0,0,0"
+                Command="{Binding ApplyCommand}"
+                Style="{StaticResource ButtonStyle}"/>
 
-        <ContentControl Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Margin="10,0,0,0">
+        <ContentControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0"
+                        Content="{Binding Processing}">
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
-                    <Setter Property="ContentTemplate" Value="{x:Null}"/>
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel />
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Processing.IsLowPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.LowPass}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Граничная частота:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.LowPassCutoff, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" 
-                                                    />
-                                                <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Граничная частота:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding LowPassCutoff, Mode=TwoWay}" />
+                                            <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding Processing.IsHighPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.HighPass}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Граничная частота:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.HighPassCutoff, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" 
-                                                    />
-                                                <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Граничная частота:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding HighPassCutoff, Mode=TwoWay}" />
+                                            <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding Processing.IsBandPassSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.BandPass}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Диапазон частот:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.BandPassLow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="-" VerticalAlignment="Center" Margin="3,0,3,0"/>
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}" 
-                                                    Text="{Binding Processing.BandPassHigh, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Диапазон:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding BandPassLow, Mode=TwoWay}" />
+                                            <TextBlock Text="-" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding BandPassHigh, Mode=TwoWay}" />
+                                            <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding Processing.IsBandStopSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.BandStop}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Подавляемый диапазон:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.BandStopLow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="-" VerticalAlignment="Center" Margin="3,0,3,0"/>
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.BandStopHigh, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Подавляемый диапазон:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding BandStopLow, Mode=TwoWay}" />
+                                            <TextBlock Text="-" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding BandStopHigh, Mode=TwoWay}" />
+                                            <TextBlock Text="Гц" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding Processing.IsMovingAverageSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.MovingAverage}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Размер окна:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.MovingAverageWindow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="отсчётов" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Размер окна:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding MovingAverageWindow, Mode=TwoWay}" />
+                                            <TextBlock Text="отсчётов" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding Processing.IsExponentialSmoothingSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <DataTrigger Binding="{Binding Content.SelectedMethod, RelativeSource={RelativeSource Self}}"
+                             Value="{x:Static models:ProcessingMethod.ExponentialSmoothing}">
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="Коэффициент сглаживания:" Margin="0,0,0,2"/>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBox 
-                                                    Width="50" 
-                                                    Style="{StaticResource TextBoxStyle}"
-                                                    Text="{Binding Processing.ExponentialAlpha, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
-                                                    />
-                                                <TextBlock Text="(0.0 - 1.0)" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Gray"/>
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Коэффициент сглаживания:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBox Width="50" Style="{StaticResource TextBoxStyle}" Text="{Binding ExponentialAlpha, Mode=TwoWay}" />
+                                            <TextBlock Text="(0.0 - 1.0)" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Gray"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
-
                     </Style.Triggers>
                 </Style>
             </ContentControl.Style>
         </ContentControl>
-
     </Grid>
 </UserControl>

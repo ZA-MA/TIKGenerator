@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using TIKGenerator.Helpers;
 using TIKGenerator.Models;
 using TIKGenerator.Services;
 using TIKGenerator.Views.Pages;
@@ -22,7 +24,7 @@ namespace TIKGenerator.ViewModels
             set { _isLoading = value; OnPropertyChanged(nameof(IsLoading)); }
         }
 
-        private const int PageSize = 10;
+        private const int PageSize = 5;
         private int _currentPage = 1;
 
         public ObservableCollection<SignalGroup> Groups { get; } = new();
@@ -42,12 +44,17 @@ namespace TIKGenerator.ViewModels
 
         private List<SignalGroup> _allGroups = new();
         public ICommand OpenGroupCommand { get; }
+        public ICommand ExportGroupCommand { get; }
+        public ICommand ImportGroupCommand { get; }
 
         public HistoryPageViewModel(ISignalGroupService groupService)
         {
             _groupService = groupService;
 
             OpenGroupCommand = new RelayCommand(OpenGroup);
+
+            ExportGroupCommand = new RelayCommand(ExportGroup);
+            ImportGroupCommand = new RelayCommand(ImportGroup);
         }
 
         public async Task LoadAllGroupsAsync()
@@ -113,6 +120,27 @@ namespace TIKGenerator.ViewModels
         {
             if (CurrentPage > 1) CurrentPage--;
             await LoadPageAsync();
+        }
+
+        private void ExportGroup(object parameter)
+        {
+            if (parameter is not SignalGroup group) return;
+
+            var window = new TIKGenerator.Views.Windows.ExportWindow(group);
+            window.Owner = Application.Current.MainWindow;
+            window.ShowDialog();
+        }
+        private async void ImportGroup(object parameter)
+        {
+            var importWindow = new TIKGenerator.Views.Windows.ImportWindow(_groupService);
+            importWindow.Owner = Application.Current.MainWindow;
+
+            bool? result = importWindow.ShowDialog();
+
+            if (result == true)
+            {
+                await LoadPageAsync();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using TIKGenerator.Models;
 using TIKGenerator.Services;
@@ -18,6 +20,11 @@ namespace TIKGenerator.ViewModels
         private readonly ISignalProcessingService _processor;
         private readonly ISignalGroupService _groupService;
 
+        private readonly List<double[]> _rawSignals = new();
+
+        private readonly List<ObservableCollection<ObservablePoint>> _seriesPoints = new();
+        public ObservableCollection<ISeries> Series { get; } = new();
+
         private SignalGroup _signalGroup = new();
         public SignalGroup SignalGroup
         {
@@ -29,17 +36,14 @@ namespace TIKGenerator.ViewModels
             }
         }
 
-        private readonly List<ObservableCollection<ObservablePoint>> _seriesPoints = new();
-
-        public ObservableCollection<ISeries> Series { get; } = new();
-
         public Axis[] XAxes { get; }
         public Axis[] YAxes { get; }
-
-        public SignalProcessingOptions Processing { get; }
+        public SignalProcessingModel Processing { get; }
 
         private double _globalMinTime = 0;
         private double _globalMaxTime = 10;
+        private const double MAX_TIME_RANGE = 1000;
+        private const double MAX_VIEW_RANGE = 100;
 
         public double GlobalMinTime => _globalMinTime;
         public double GlobalMaxTime => _globalMaxTime;
@@ -86,54 +90,25 @@ namespace TIKGenerator.ViewModels
         }
 
         private double _mean;
-        public double Mean
-        {
-            get => _mean;
-            set
-            {
-                _mean = Math.Round(value, 3);
-                OnPropertyChanged(nameof(Mean));
-            }
-        }
+        public double Mean { get => _mean; set { _mean = Math.Round(value, 3); OnPropertyChanged(nameof(Mean)); } }
 
         private double _max;
-        public double Max
-        {
-            get => _max;
-            set
-            {
-                _max = Math.Round(value, 3);
-                OnPropertyChanged(nameof(Max));
-            }
-        }
+        public double Max { get => _max; set { _max = Math.Round(value, 3); OnPropertyChanged(nameof(Max)); } }
 
         private double _min;
-        public double Min
-        {
-            get => _min;
-            set
-            {
-                _min = Math.Round(value, 3);
-                OnPropertyChanged(nameof(Min));
-            }
-        }
+        public double Min { get => _min; set { _min = Math.Round(value, 3); OnPropertyChanged(nameof(Min)); } }
 
- 
-        private const double MAX_TIME_RANGE = 1000;
-        private const double MAX_VIEW_RANGE = 100;
 
-        public GeneratorViewModel(ISignalGeneratorService generator, ISignalProcessingService processor, ISignalGroupService groupService)
+        public GeneratorViewModel(
+            ISignalGeneratorService generator,
+            ISignalProcessingService processor,
+            ISignalGroupService groupService)
         {
             _generator = generator;
             _processor = processor;
             _groupService = groupService;
 
-            Processing = new SignalProcessingOptions();
-            Processing.ProcessingApplied += (s, e) =>
-            {
-                UpdateAllSignals();
-                UpdateStatistics();
-            };
+            Processing = new SignalProcessingModel();
 
             XAxes = new Axis[]
             {
@@ -156,11 +131,16 @@ namespace TIKGenerator.ViewModels
             UpdateStatistics();
         }
 
-        public async Task AddSignalAsync(Signal signal, IProgress<double> progress = null, CancellationToken token = default)
+        public async Task AddSignalAsync(
+            Signal signal,
+            IProgress<double> progress = null,
+            CancellationToken token = default)
         {
             if (signal == null) return;
 
-            if(!SignalGroup.Signals.Contains(signal))
+            ResetProcessing();
+
+            if (!SignalGroup.Signals.Contains(signal))
                 SignalGroup.Signals.Add(signal);
 
             RecalculateGlobalTimeRange();
@@ -168,79 +148,168 @@ namespace TIKGenerator.ViewModels
             double dt = (signal.TimeEnd - signal.TimeStart) / (signal.NumberOfPoints - 1);
             double sampleRate = signal.NumberOfPoints / (signal.TimeEnd - signal.TimeStart);
 
-            var rawData = await Task.Run(() => _generator.Generate(signal, dt));
-            var processedData = new double[rawData.Length];
+            var raw = await Task.Run(() => _generator.Generate(signal, dt));
+
+            _rawSignals.Add(raw);
+
+            var processed = new double[raw.Length];
 
             int chunkSize = 100;
+            int lastPercent = -1;
 
-            for (int offset = 0; offset < rawData.Length; offset += chunkSize)
+            for (int offset = 0; offset < raw.Length; offset += chunkSize)
             {
                 token.ThrowIfCancellationRequested();
 
-                int len = Math.Min(chunkSize, rawData.Length - offset);
-                double[] chunk = rawData.Skip(offset).Take(len).ToArray();
+                int len = Math.Min(chunkSize, raw.Length - offset);
 
-                double[] processedChunk = await Task.Run(() =>
+                double[] chunk = new double[len];
+                Array.Copy(raw, offset, chunk, 0, len);
+
+                double[] chunkProcessed = await Task.Run(() =>
                     _processor.ProcessSignal(chunk, Processing, sampleRate)
                 );
 
-                Array.Copy(processedChunk, 0, processedData, offset, len);
+                Array.Copy(chunkProcessed, 0, processed, offset, len);
 
-                double percent = (offset + len) * 100.0 / rawData.Length;
-                progress?.Report(percent);
+                int p = (offset + len) * 100 / raw.Length;
+                if (p != lastPercent)
+                {
+                    progress?.Report(p);
+                    lastPercent = p;
+                }
 
                 await Task.Yield();
 
-                // задержка для теста
+                // для теста
                 //await Task.Delay(1000, token);
             }
 
-            var points = new ObservableCollection<ObservablePoint>(
-                processedData.Select((y, i) => new ObservablePoint(
-                    Math.Round(signal.TimeStart + i * dt, 6),
-                    Math.Round(y, 6)
-                ))
-            );
+            var points = BuildPoints(signal, processed);
 
             _seriesPoints.Add(points);
 
-            var series = new LineSeries<ObservablePoint>
+            Series.Add(new LineSeries<ObservablePoint>
             {
                 Values = points,
                 Name = signal.Name,
                 GeometrySize = 0,
                 LineSmoothness = 0
-            };
+            });
 
-            Series.Add(series);
             UpdateStatistics();
         }
 
-        private void UpdateAllSignals()
+        public void ApplyProcessing(SignalProcessingModel model)
+        {
+            if (model == null) return;
+
+            CopyProcessingParameters(model);
+
+            bool isOverlay = model.SelectedMethod == ProcessingMethod.Overlay;
+
+            Series.Clear();
+            _seriesPoints.Clear();
+
+            if (_rawSignals.Count == 0)
+                return;
+
+            if (isOverlay)
+            {
+                ApplyOverlayProcessing();
+            }
+            else
+            {
+                ApplyRegularProcessing();
+            }
+
+            UpdateStatistics();
+        }
+
+        private void ApplyRegularProcessing()
         {
             for (int i = 0; i < SignalGroup.Signals.Count; i++)
             {
-                var signal = SignalGroup.Signals[i];
-                double dt = (signal.TimeEnd - signal.TimeStart) / (signal.NumberOfPoints - 1);
-                var data = _generator.Generate(signal, dt);
-                double sampleRate = signal.NumberOfPoints / (signal.TimeEnd - signal.TimeStart);
-                data = _processor.ProcessSignal(data, Processing, sampleRate);
+                var s = SignalGroup.Signals[i];
+                var raw = _rawSignals[i];
 
-                var points = new ObservableCollection<ObservablePoint>(
-                    data.Select((y, idx) => new ObservablePoint(
-                        Math.Round(signal.TimeStart + idx * dt, 6),
-                        Math.Round(y, 6)
-                    ))
-                );
-                _seriesPoints[i] = points;
+                double sampleRate = s.NumberOfPoints / (s.TimeEnd - s.TimeStart);
 
-                if (Series[i] is LineSeries<ObservablePoint> series)
+                var processed = _processor.ProcessSignal(raw, Processing, sampleRate);
+
+                var points = BuildPoints(s, processed);
+
+                _seriesPoints.Add(points);
+                Series.Add(new LineSeries<ObservablePoint>
                 {
-                    series.Values = points;
-                }
+                    Values = points,
+                    Name = s.Name,
+                    GeometrySize = 0,
+                    LineSmoothness = 0
+                });
             }
-            UpdateViewRange();
-            UpdateStatistics();
+        }
+
+        private void ApplyOverlayProcessing()
+        {
+            double[] combined = _processor.ApplyOverlay(_rawSignals.ToArray());
+
+            var first = SignalGroup.Signals.First();
+            double dt = (first.TimeEnd - first.TimeStart) / (first.NumberOfPoints - 1);
+
+            var points = new ObservableCollection<ObservablePoint>(
+                combined.Select((y, i) =>
+                    new ObservablePoint(first.TimeStart + i * dt, y)));
+
+            _seriesPoints.Add(points);
+
+            string name = string.Join(" + ", SignalGroup.Signals.Select(s => s.Name));
+
+            Series.Add(new LineSeries<ObservablePoint>
+            {
+                Values = points,
+                Name = name,
+                GeometrySize = 0,
+                LineSmoothness = 0
+            });
+        }
+
+        private void ResetProcessing()
+        {
+            Processing.SelectedMethod = ProcessingMethod.None;
+            Processing.LowPassCutoff = 0;
+            Processing.HighPassCutoff = 0;
+            Processing.BandPassLow = 0;
+            Processing.BandPassHigh = 0;
+            Processing.BandStopLow = 0;
+            Processing.BandStopHigh = 0;
+            Processing.MovingAverageWindow = 1;
+            Processing.ExponentialAlpha = 1;
+        }
+
+        private ObservableCollection<ObservablePoint> BuildPoints(Signal s, double[] values)
+        {
+            double dt = (s.TimeEnd - s.TimeStart) / (values.Length - 1);
+
+            return new ObservableCollection<ObservablePoint>(
+                Enumerable.Range(0, values.Length)
+                    .Select(i => new ObservablePoint(
+                        Math.Round(s.TimeStart + i * dt, 6),
+                        Math.Round(values[i], 6)
+                    )));
+        }
+
+        private void CopyProcessingParameters(SignalProcessingModel model)
+        {
+            Processing.SelectedMethod = model.SelectedMethod;
+            Processing.LowPassCutoff = model.LowPassCutoff;
+            Processing.HighPassCutoff = model.HighPassCutoff;
+            Processing.BandPassLow = model.BandPassLow;
+            Processing.BandPassHigh = model.BandPassHigh;
+            Processing.BandStopLow = model.BandStopLow;
+            Processing.BandStopHigh = model.BandStopHigh;
+            Processing.MovingAverageWindow = model.MovingAverageWindow;
+            Processing.ExponentialAlpha = model.ExponentialAlpha;
         }
 
         private void UpdateViewRange()
@@ -248,16 +317,6 @@ namespace TIKGenerator.ViewModels
             XAxes[0].MinLimit = ViewStart;
             XAxes[0].MaxLimit = ViewEnd;
             XAxes[0].MinStep = Math.Max(0.1, (ViewEnd - ViewStart) / 100);
-        }
-
-        public void Clear()
-        {
-            _signalGroup = new();
-            SignalGroup = new();
-            _seriesPoints.Clear();
-            Series.Clear();
-            RecalculateGlobalTimeRange();
-            UpdateStatistics();
         }
 
         private void RecalculateGlobalTimeRange()
@@ -273,61 +332,87 @@ namespace TIKGenerator.ViewModels
                 _globalMaxTime = SignalGroup.Signals.Max(s => s.TimeEnd);
 
                 if (_globalMaxTime - _globalMinTime > MAX_TIME_RANGE)
-                {
                     _globalMaxTime = _globalMinTime + MAX_TIME_RANGE;
-                }
             }
 
             OnPropertyChanged(nameof(GlobalMinTime));
             OnPropertyChanged(nameof(GlobalMaxTime));
 
-            var newViewStart = Math.Max(_globalMinTime, ViewStart);
-            var newViewEnd = Math.Min(_globalMaxTime, ViewEnd);
+            var start = Math.Max(_globalMinTime, ViewStart);
+            var end = Math.Min(_globalMaxTime, ViewEnd);
 
-            if (newViewEnd - newViewStart > MAX_VIEW_RANGE)
-            {
-                newViewEnd = newViewStart + MAX_VIEW_RANGE;
-            }
+            if (end - start > MAX_VIEW_RANGE)
+                end = start + MAX_VIEW_RANGE;
 
-            ViewStart = newViewStart;
-            ViewEnd = newViewEnd;
+            ViewStart = start;
+            ViewEnd = end;
         }
 
         private void UpdateStatistics()
         {
             if (_seriesPoints.Count == 0)
             {
-                Mean = 0;
-                Max = 0;
-                Min = 0;
+                Mean = Max = Min = 0;
                 return;
             }
 
-            var visiblePoints = new List<double>();
+            double sum = 0;
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            int count = 0;
 
-            foreach (var points in _seriesPoints)
+            foreach (var series in _seriesPoints)
             {
-                var pointsInView = points.Where(p => p.X >= ViewStart && p.X <= ViewEnd && p.Y.HasValue);
-                visiblePoints.AddRange(pointsInView.Select(p => p.Y.Value));
+                foreach (var p in series)
+                {
+                    if (!p.Y.HasValue) continue;
+                    if (p.X < ViewStart || p.X > ViewEnd) continue;
+
+                    double y = p.Y.Value;
+
+                    sum += y;
+                    count++;
+
+                    if (y < min) min = y;
+                    if (y > max) max = y;
+                }
             }
 
-            if (visiblePoints.Count == 0)
+            if (count == 0)
             {
-                Mean = 0;
-                Max = 0;
-                Min = 0;
+                Mean = Max = Min = 0;
                 return;
             }
 
-            Mean = Math.Round(visiblePoints.Average(), 6);
-            Max = Math.Round(visiblePoints.Max(), 6);
-            Min = Math.Round(visiblePoints.Min(), 6);
+            Mean = sum / count;
+            Max = max;
+            Min = min;
         }
 
+        public void Clear()
+        {
+            SignalGroup = new SignalGroup();
+
+            _rawSignals.Clear();
+
+            _seriesPoints.Clear();
+            Series.Clear();
+
+            ResetProcessing();
+
+            _globalMinTime = 0;
+            _globalMaxTime = 10;
+            ViewStart = 0;
+            ViewEnd = 10;
+
+            OnPropertyChanged(nameof(GlobalMinTime));
+            OnPropertyChanged(nameof(GlobalMaxTime));
+
+            UpdateViewRange();
+            UpdateStatistics();
+        }
         public async Task SaveSignalGroup(string name)
         {
-            _signalGroup = new SignalGroup();
-
             if (!string.IsNullOrWhiteSpace(name))
                 _signalGroup.Name = name;
 
@@ -348,11 +433,8 @@ namespace TIKGenerator.ViewModels
                 })
                 .ToList();
 
-            bool success = await _groupService.UpdateGroupAsync(_signalGroup);
-            if (success)
-                MessageBox.Show("Cохранено!");
-            else
-                MessageBox.Show("Ошибка при сохранении!");
+            bool success = await _groupService.SaveGroupAsync(_signalGroup);
+            MessageBox.Show(success ? "Сохранено!" : "Ошибка при сохранении!");
         }
 
         public async Task UpdateSignalGroup()
@@ -361,10 +443,7 @@ namespace TIKGenerator.ViewModels
                 return;
 
             bool success = await _groupService.UpdateGroupAsync(_signalGroup);
-            if (success)
-                MessageBox.Show("Cохранено!");
-            else
-                MessageBox.Show("Ошибка при сохранении!");
+            MessageBox.Show(success ? "Сохранено!" : "Ошибка при сохранении!");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -7,7 +7,7 @@
         xmlns:inputField="clr-namespace:TIKGenerator.Views.Components.InputField"
         mc:Ignorable="d"
         Title="SaveSignalGroup" Height="200" Width="300" ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel Grid.Column="0" Margin="10" VerticalAlignment="Center">
             <inputField:InputField 

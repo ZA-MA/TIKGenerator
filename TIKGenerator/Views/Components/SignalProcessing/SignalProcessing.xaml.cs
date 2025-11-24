@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using TIKGenerator.Models;
+using TIKGenerator.ViewModels;
 
 namespace TIKGenerator.Views.Components.SignalProcessing
 {
@@ -9,25 +10,9 @@ namespace TIKGenerator.Views.Components.SignalProcessing
         public SignalProcessing()
         {
             InitializeComponent();
+            DataContext = new SignalProcessingViewModel();
         }
 
-        public SignalProcessingOptions Processing
-        {
-            get => (SignalProcessingOptions)GetValue(ProcessingProperty);
-            set => SetValue(ProcessingProperty, value);
-        }
-
-        public static readonly DependencyProperty ProcessingProperty =
-            DependencyProperty.Register(
-                nameof(Processing),
-                typeof(SignalProcessingOptions),
-                typeof(SignalProcessing),
-                new PropertyMetadata(null)
-            );
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
+        public SignalProcessingViewModel VM => (SignalProcessingViewModel)DataContext;
     }
 }

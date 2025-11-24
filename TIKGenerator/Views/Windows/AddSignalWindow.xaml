@@ -6,7 +6,7 @@
     xmlns:inputField="clr-namespace:TIKGenerator.Views.Components.InputField"
     Title="{DynamicResource AddSignal}" 
     Height="600" Width="350" ResizeMode="NoResize"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <StackPanel Grid.Column="0" Margin="0 0 0 0">
 
@@ -17,6 +17,14 @@
             <inputField:InputField Label="{DynamicResource Points}" InputType="Number" x:Name="PointsField"/>
             <inputField:InputField Label="{DynamicResource TimeStart}" InputType="Number" x:Name="TimeStart"/>
             <inputField:InputField Label="{DynamicResource TimeEnd}" InputType="Number" x:Name="TimeEnd"/>
+
+            <!--<inputField:InputField Label="{DynamicResource Name}" InputType="Text" x:Name="NameField" TextValue="123"/>
+            <inputField:InputField Label="{DynamicResource Amplitude}" InputType="Number" x:Name="AmplitudeField" TextValue="5"/>
+            <inputField:InputField Label="{DynamicResource Frequency}" InputType="Number" x:Name="FrequencyField" TextValue="2"/>
+            <inputField:InputField Label="{DynamicResource Phase}" InputType="Number" x:Name="PhaseField" TextValue="5"/>
+            <inputField:InputField Label="{DynamicResource Points}" InputType="Number" x:Name="PointsField" TextValue="500"/>
+            <inputField:InputField Label="{DynamicResource TimeStart}" InputType="Number" x:Name="TimeStart" TextValue="0"/>
+            <inputField:InputField Label="{DynamicResource TimeEnd}" InputType="Number" x:Name="TimeEnd" TextValue="10"/>-->
 
             <ComboBox x:Name="SignalTypeBox" Margin="0 0 0 10" Style="{StaticResource ComboBoxStyle}">
                 <ComboBoxItem Content="{DynamicResource SineWave}" Tag="{x:Static signalType:SignalType.SineWave}" IsSelected="True" />

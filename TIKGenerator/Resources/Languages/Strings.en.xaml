@@ -3,12 +3,14 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:String x:Key="AddSignal">Add Signal</sys:String>
+    <sys:String x:Key="Save">Save</sys:String>
     <sys:String x:Key="Cancel">Cancel</sys:String>
+    <sys:String x:Key="Apply">Apply</sys:String>
     
     <sys:String x:Key="Name">Name</sys:String>
-    <sys:String x:Key="Amplitude">Amplitude</sys:String>
-    <sys:String x:Key="Frequency">Frequency</sys:String>
-    <sys:String x:Key="Phase">Phase</sys:String>
+    <sys:String x:Key="Amplitude_en">Amplitude</sys:String>
+    <sys:String x:Key="Frequency_en">Frequency, Hz</sys:String>
+    <sys:String x:Key="Phase_en">Phase, °</sys:String>
     <sys:String x:Key="Points">Points</sys:String>
     <sys:String x:Key="TimeStart">Start Time</sys:String>
     <sys:String x:Key="TimeEnd">End Time</sys:String>
@@ -24,7 +26,58 @@
 
 
     <sys:String x:Key="BtnGenerateSignals">Generate Signals</sys:String>
-    <sys:String x:Key="BtnHistory">Signal History</sys:String>
-    <sys:String x:Key="BtnExport">Export</sys:String>
-    <sys:String x:Key="BtnImport">Import</sys:String>
+
+    <sys:String x:Key="Error_EnterName">Enter name</sys:String>
+    <sys:String x:Key="Error_AmplitudePositive">Amplitude must be > 0</sys:String>
+    <sys:String x:Key="Error_FrequencyPositive">Frequency must be > 0</sys:String>
+    <sys:String x:Key="Error_PhaseNotEmpty">Phase cannot be empty</sys:String>
+    <sys:String x:Key="Error_PointsMin">Number of points must be ≥ 10</sys:String>
+    <sys:String x:Key="Error_TimeStartMin">Start time must be ≥ 0</sys:String>
+    <sys:String x:Key="Error_TimeEndMin">End time must be ≥ 1</sys:String>
+    <sys:String x:Key="Error_TimeEndAfterStart">End time must be greater than start time</sys:String>
+    <sys:String x:Key="Error_FixFields">Fix errors in input fields.</sys:String>
+    <sys:String x:Key="Error_Input">Input error: {0}</sys:String>
+
+    <sys:String x:Key="Stat_Average">Average:</sys:String>
+    <sys:String x:Key="Stat_Max">Max:</sys:String>
+    <sys:String x:Key="Stat_Min">Min:</sys:String>
+
+    <sys:String x:Key="ProcessingMethod">Processing method</sys:String>
+    <sys:String x:Key="None">None</sys:String>
+    <sys:String x:Key="LowPass">Low Pass</sys:String>
+    <sys:String x:Key="HighPass">High Pass</sys:String>
+    <sys:String x:Key="BandPass">Band Pass</sys:String>
+    <sys:String x:Key="BandStop">Band Stop</sys:String>
+    <sys:String x:Key="MovingAverage">Moving Average</sys:String>
+    <sys:String x:Key="ExponentialSmoothing">Exponential Smoothing</sys:String>
+    <sys:String x:Key="FFT">FFT</sys:String>
+    <sys:String x:Key="Normalization">Normalization</sys:String>
+    <sys:String x:Key="Overlay">Overlay</sys:String>
+    <sys:String x:Key="LowPass_Cutoff">Cutoff frequency:</sys:String>
+    <sys:String x:Key="HighPass_Cutoff">Cutoff frequency:</sys:String>
+    <sys:String x:Key="BandPass_Range">Range:</sys:String>
+    <sys:String x:Key="BandStop_Range">Stopband range:</sys:String>
+    <sys:String x:Key="MovingAverage_Window">Window size:</sys:String>
+    <sys:String x:Key="MovingAverage_Units">samples</sys:String>
+    <sys:String x:Key="ExponentialSmoothing_Alpha">Smoothing factor:</sys:String>
+    <sys:String x:Key="ExponentialSmoothing_Range">(0.0 - 1.0)</sys:String>
+    <sys:String x:Key="Hz">Hz</sys:String>
+    <sys:String x:Key="Samples">samples</sys:String>
+    <sys:String x:Key="RangeSymbol">-</sys:String>
+
+    <sys:String x:Key="HistorySignals">Signal history</sys:String>
+    <sys:String x:Key="Import">Import</sys:String>
+    <sys:String x:Key="Export">Export</sys:String>
+    <sys:String x:Key="Show">Show</sys:String>
+    <sys:String x:Key="Previous">Previous</sys:String>
+    <sys:String x:Key="Next">Next</sys:String>
+    <sys:String x:Key="SignalsCount">Signals:</sys:String>
+    <sys:String x:Key="SignalName">Name:</sys:String>
+    <sys:String x:Key="SignalTypeName">Type:</sys:String>
+    <sys:String x:Key="SignalAmplitude">Amplitude:</sys:String>
+    <sys:String x:Key="SignalFrequency">Frequency:</sys:String>
+    <sys:String x:Key="SignalPhase">Phase:</sys:String>
+    <sys:String x:Key="SignalPoints">Points:</sys:String>
+    <sys:String x:Key="SignalStart">Start:</sys:String>
+    <sys:String x:Key="SignalEnd">End:</sys:String>
 </ResourceDictionary>

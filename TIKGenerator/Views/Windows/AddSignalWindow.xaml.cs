@@ -23,47 +23,72 @@ namespace TIKGenerator.Views.Windows
         {
             InitializeComponent();
 
-            NameField.Rule = value => string.IsNullOrWhiteSpace(NameField.TextValue) ? "Введите название" : null;
+            NameField.Rule = value =>
+                string.IsNullOrWhiteSpace(NameField.TextValue)
+                    ? (string)Application.Current.Resources["Error_EnterName"]
+                    : null;
 
-            AmplitudeField.Rule = value => value == null || value <= 0 ? "Амплитуда должна быть > 0" : null;
+            AmplitudeField.Rule = value =>
+                value == null || value <= 0
+                    ? (string)Application.Current.Resources["Error_AmplitudePositive"]
+                    : null;
 
             FrequencyField.Rule = value =>
                 value == null || value <= 0
-                    ? "Частота должна быть > 0"
+                    ? (string)Application.Current.Resources["Error_FrequencyPositive"]
                     : null;
 
             PhaseField.Rule = value =>
                 value == null
-                    ? "Фаза не может быть пустой"
+                    ? (string)Application.Current.Resources["Error_PhaseNotEmpty"]
                     : null;
 
             PointsField.Rule = value =>
                 value == null || value < 10
-                    ? "Количество точек должно быть ≥ 10"
+                    ? (string)Application.Current.Resources["Error_PointsMin"]
                     : null;
 
             TimeStart.Rule = value =>
-                value == null || value >= 0
-                    ? "Время начала должно быть ≥ 0"
+                value == null || value < 0
+                    ? (string)Application.Current.Resources["Error_TimeStartMin"]
                     : null;
 
             TimeEnd.Rule = value =>
-                value == null || value >= 1
-                    ? "Время начала должно быть ≥ 1"
-                    : null;
+            {
+                if (value == null)
+                    return (string)Application.Current.Resources["Error_TimeEndMin"];
+
+                if (value < 1)
+                    return (string)Application.Current.Resources["Error_TimeEndMin"];
+
+                if (TimeStart.NumberValue != null && value <= TimeStart.NumberValue)
+                    return (string)Application.Current.Resources["Error_TimeEndAfterStart"];
+
+                return null;
+            };
         }
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                NameField.Validate();
+                AmplitudeField.Validate();
+                FrequencyField.Validate();
+                PhaseField.Validate();
+                PointsField.Validate();
+                TimeStart.Validate();
+                TimeEnd.Validate();
+
                 if (!string.IsNullOrEmpty(NameField.Error) ||
                     !string.IsNullOrEmpty(AmplitudeField.Error) ||
                     !string.IsNullOrEmpty(FrequencyField.Error) ||
                     !string.IsNullOrEmpty(PhaseField.Error) ||
-                    !string.IsNullOrEmpty(PointsField.Error))
+                    !string.IsNullOrEmpty(PointsField.Error) ||
+                    !string.IsNullOrEmpty(TimeStart.Error) ||
+                    !string.IsNullOrEmpty(TimeEnd.Error))
                 {
-                    MessageBox.Show("Исправьте ошибки в полях ввода.");
+                    MessageBox.Show((string)Application.Current.Resources["Error_FixFields"]);
                     return;
                 }
 
@@ -83,7 +108,7 @@ namespace TIKGenerator.Views.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка ввода: " + ex.Message);
+                MessageBox.Show(string.Format((string)Application.Current.Resources["Error_Input"], ex.Message)) ;
             }
         }
 

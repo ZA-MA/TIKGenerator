@@ -28,7 +28,7 @@ namespace TIKGenerator.Services
                         break;
 
                     case SignalType.Meander:
-                        data[i] = s.Amplitude * Math.Sign(Math.Sin(2 * Math.PI * s.Frequency * t + s.Phase));
+                        data[i] = s.Amplitude * ((Math.Floor(2 * s.Frequency * t) % 2 == 0) ? 1 : -1);
                         break;
 
                     case SignalType.Triangular:

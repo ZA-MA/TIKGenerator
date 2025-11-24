@@ -11,7 +11,7 @@
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -25,25 +25,23 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-                <TextBlock 
-                    Text="История сигналов"
-                    VerticalAlignment="Center"
-                    Grid.Column="0"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    />
+            <TextBlock 
+                Text="{DynamicResource HistorySignals}"
+                VerticalAlignment="Center"
+                FontSize="20"
+                FontWeight="Bold"
+                />
 
-                <Button 
-                    x:Name="ImportButton"
-                    Content="Импорт"
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Style="{StaticResource ButtonStyle}"
-                    Width="100"
-                    />
+            <Button 
+                Grid.Column="1"
+                Content="{DynamicResource Import}"
+                Command="{Binding DataContext.ImportGroupCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                Style="{StaticResource ButtonStyle}"
+                Width="100"
+                />
         </Grid>
 
-        <ListBox ItemsSource="{Binding Groups}" Grid.Row="1" HorizontalContentAlignment="Stretch" BorderBrush="Transparent">
+        <ListBox ItemsSource="{Binding Groups}" Grid.Row="1" BorderBrush="Transparent">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -52,46 +50,46 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Margin="2" Padding="5" HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Vertical">
-                            
-                            <Grid HorizontalAlignment="Stretch">
+
+                    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Margin="2" Padding="5">
+                        <StackPanel>
+                            <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <StackPanel Grid.Column="0">
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14"/>
-                                    <TextBlock Text="{Binding CreatedAt, StringFormat='Created: {0:dd.MM.yyyy HH:mm}'}" FontSize="11" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}" 
+                                               FontSize="11" Foreground="Gray"/>
                                 </StackPanel>
 
-                                <TextBlock 
-                                    Grid.Column="1" 
-                                    Text="{Binding Signals.Count, StringFormat='Signals: {0}'}" 
-                                    VerticalAlignment="Center" Margin="10,0"
-                                    
-                                    />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                    <TextBlock Text="{DynamicResource SignalsCount}" />
+                                    <TextBlock Text=" " Margin="3,0"/>
+                                    <TextBlock Text="{Binding Signals.Count}" />
+                                </StackPanel>
 
-                                <Button 
-                                    Grid.Column="2" Content="Показать" Margin="10,0,0,0"
-                                    Command="{Binding DataContext.OpenGroupCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                    CommandParameter="{Binding}" 
-                                    Style="{StaticResource ButtonStyle}"
-                                    Width="160"
-                                    Height="20"
-                                    />
-                                
-                                <Button 
-                                    Grid.Column="3" Content="Export" Margin="10,0,0,0"
-                                    Command="{Binding DataContext.ExportGroupCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                    CommandParameter="{Binding}" 
-                                    Style="{StaticResource ButtonStyle}"
-                                    Width="60"
-                                    Height="20"
-                                    />
+                                <Button Grid.Column="2" 
+                                        Content="{DynamicResource Show}" 
+                                        Command="{Binding DataContext.OpenGroupCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}" 
+                                        Style="{StaticResource ButtonStyle}"
+                                        Width="160"
+                                        Height="20"
+                                        Margin="10,0,0,0"/>
+
+                                <Button Grid.Column="3" 
+                                        Content="{DynamicResource Export}"
+                                        Command="{Binding DataContext.ExportGroupCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}" 
+                                        Style="{StaticResource ButtonStyle}"
+                                        Width="60"
+                                        Height="20"
+                                        Margin="10,0,0,0"/>
                             </Grid>
 
                             <ItemsControl ItemsSource="{Binding Signals}">
@@ -103,6 +101,7 @@
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
+
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="*"/>
@@ -110,17 +109,47 @@
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name, StringFormat='Name: {0}'}"/>
-                                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Type, StringFormat='Type: {0}'}"/>
-                                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Amplitude, StringFormat='Amp: {0}'}"/>
-                                                <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Frequency, StringFormat='Freq: {0}'}"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="0">
+                                                    <Run Text="{DynamicResource SignalName}"/>
+                                                    <Run Text="{Binding Name}"/>
+                                                </TextBlock>
 
-                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Phase, StringFormat='Phase: {0}'}"/>
-                                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding NumberOfPoints, StringFormat='Points: {0}'}"/>
-                                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding TimeStart, StringFormat='Start: {0}'}"/>
-                                                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding TimeEnd, StringFormat='End: {0}'}"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1">
+                                                    <Run Text="{DynamicResource SignalTypeName}"/>
+                                                    <Run Text="{Binding Type}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="0" Grid.Column="2">
+                                                    <Run Text="{DynamicResource SignalAmplitude}"/>
+                                                    <Run Text="{Binding Amplitude}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="0" Grid.Column="3">
+                                                    <Run Text="{DynamicResource SignalFrequency}"/>
+                                                    <Run Text="{Binding Frequency}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="1" Grid.Column="0">
+                                                    <Run Text="{DynamicResource SignalPhase}"/>
+                                                    <Run Text="{Binding Phase}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="1" Grid.Column="1">
+                                                    <Run Text="{DynamicResource SignalPoints}"/>
+                                                    <Run Text="{Binding NumberOfPoints}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="1" Grid.Column="2">
+                                                    <Run Text="{DynamicResource SignalStart}"/>
+                                                    <Run Text="{Binding TimeStart}"/>
+                                                </TextBlock>
+
+                                                <TextBlock Grid.Row="1" Grid.Column="3">
+                                                    <Run Text="{DynamicResource SignalEnd}"/>
+                                                    <Run Text="{Binding TimeEnd}"/>
+                                                </TextBlock>
                                             </Grid>
-                                          </Border> 
+                                        </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -135,11 +164,15 @@
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Button Content="Previous" Click="Previous_Click" Margin="5" Style="{StaticResource ButtonStyle}" Width="50" FontSize="10" Height="20"/>
-            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
+            <Button Content="{DynamicResource Previous}" Click="Previous_Click" Style="{StaticResource ButtonStyle}" Width="50" Height="20" FontSize="10"/>
+            
+            <TextBlock Text="{Binding CurrentPage}" Margin="5" VerticalAlignment="Center"/>
+            
             <TextBlock Text=" / " VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" Margin="5"/>
-            <Button Content="Next" Click="Next_Click" Margin="5" Style="{StaticResource ButtonStyle}" Width="50" FontSize="10" Height="20"/>
+          
+            <TextBlock Text="{Binding TotalPages}" Margin="5" VerticalAlignment="Center"/>
+            
+            <Button Content="{DynamicResource Next}" Click="Next_Click" Style="{StaticResource ButtonStyle}" Width="50" Height="20" FontSize="10" Cursor="Hand"/>
         </StackPanel>
     </Grid>
 </Page>

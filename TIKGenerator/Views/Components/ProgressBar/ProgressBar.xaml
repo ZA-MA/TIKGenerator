@@ -8,7 +8,7 @@
                 BorderBrush="#444"
                 BorderThickness="1"
                 CornerRadius="8"
-                Padding="20"
+                Padding="10"
                 Width="Auto"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
@@ -32,9 +32,11 @@
                            Margin="0 0 0 15"
                            HorizontalAlignment="Center"/>
 
-                <Button Content="Отмена"
+                <Button Content="{DynamicResource Cancel}"
                         Width="100"
-                        Command="{Binding CancelCommand}"/>
+                        Command="{Binding CancelCommand}"
+                        Height="20"
+                        Style="{StaticResource ButtonStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

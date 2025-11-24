@@ -24,7 +24,7 @@
             FontSize="18"
             FontWeight="Bold"/>
 
-        <sp:SignalProcessing Grid.Row="1" Processing="{Binding Processing}"/>
+        <sp:SignalProcessing x:Name="SignalProcessing" Grid.Row="1"/>
 
         <Grid Grid.Row="2">
             <lvc:CartesianChart
@@ -33,6 +33,7 @@
                 XAxes="{Binding XAxes}"
                 YAxes="{Binding YAxes}"
                 LegendPosition="Bottom" 
+                ZoomMode="Y"
                 />
 
             <prb:ProgressBar x:Name="ProgressBarControl" Visibility="Collapsed"/>
@@ -56,29 +57,29 @@
         </StackPanel>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Text="Среднее:" FontWeight="Bold"/>
+            <TextBlock Text="{DynamicResource Stat_Average}" FontWeight="Bold"/>
             <TextBlock Text="{Binding Mean}" Margin="5,0,10,0"/>
-            <TextBlock Text="Макс:" FontWeight="Bold"/>
+            <TextBlock Text="{DynamicResource Stat_Max}" FontWeight="Bold"/>
             <TextBlock Text="{Binding Max}" Margin="5,0,10,0"/>
-            <TextBlock Text="Мин:" FontWeight="Bold"/>
+            <TextBlock Text="{DynamicResource Stat_Min}" FontWeight="Bold"/>
             <TextBlock Text="{Binding Min}" Margin="5,0,10,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Stretch">
-            <Button Content="Добавить сигнал"
+            <Button Content="{DynamicResource AddSignal}"
                     Width="150"
                     HorizontalAlignment="Left"
                     Click="AddSignalButton_Click"
                     Style="{StaticResource ButtonStyle}"
                     />
-            
-            <Button Content="Очистить"
+
+            <Button Content="{DynamicResource Clear}"
                     Width="100"
                     HorizontalAlignment="Right"
                     Style="{StaticResource ButtonStyle}"
                     Click="ClearButton_Click"/>
-            
-            <Button Content="Сохранить"
+
+            <Button Content="{DynamicResource Save}"
                     Width="100"
                     HorizontalAlignment="Right"
                     Style="{StaticResource ButtonStyle}"

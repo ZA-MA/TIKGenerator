@@ -16,9 +16,6 @@ using TIKGenerator.ViewModels;
 
 namespace TIKGenerator.Views.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для HistoryPage.xaml
-    /// </summary>
     public partial class HistoryPage : Page
     {
         public HistoryPageViewModel Vm { get; }

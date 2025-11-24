@@ -85,7 +85,7 @@ namespace TIKGenerator.Views.Components.InputField
 
         public Func<double?, string> Rule { get; set; }
 
-        private void Validate()
+        public void Validate()
         {
             if (Rule != null)
                 Error = Rule(NumberValue);

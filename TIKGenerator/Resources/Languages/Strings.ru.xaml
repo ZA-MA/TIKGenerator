@@ -3,12 +3,14 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:String x:Key="AddSignal">Добавить сигнал</sys:String>
+    <sys:String x:Key="Save">Сохранить</sys:String>
     <sys:String x:Key="Cancel">Отменить</sys:String>
+    <sys:String x:Key="Apply">Применить</sys:String>
 
     <sys:String x:Key="Name">Название</sys:String>
     <sys:String x:Key="Amplitude">Амплитуда</sys:String>
-    <sys:String x:Key="Frequency">Частота</sys:String>
-    <sys:String x:Key="Phase">Фаза</sys:String>
+    <sys:String x:Key="Frequency">Частота, Гц</sys:String>
+    <sys:String x:Key="Phase">Фаза, °</sys:String>
     <sys:String x:Key="Points">Количество точек</sys:String>
     <sys:String x:Key="TimeStart">Время начала</sys:String>
     <sys:String x:Key="TimeEnd">Время окончания</sys:String>
@@ -24,8 +26,60 @@
 
 
     <sys:String x:Key="BtnGenerateSignals">Генерация сигналов</sys:String>
-    <sys:String x:Key="BtnHistory">История сигналов</sys:String>
-    <sys:String x:Key="BtnExport">Экспорт</sys:String>
-    <sys:String x:Key="BtnImport">Импорт</sys:String>
-    
+
+    <sys:String x:Key="Error_EnterName">Введите название</sys:String>
+    <sys:String x:Key="Error_AmplitudePositive">Амплитуда должна быть > 0</sys:String>
+    <sys:String x:Key="Error_FrequencyPositive">Частота должна быть > 0</sys:String>
+    <sys:String x:Key="Error_PhaseNotEmpty">Фаза не может быть пустой</sys:String>
+    <sys:String x:Key="Error_PointsMin">Количество точек должно быть ≥ 10</sys:String>
+    <sys:String x:Key="Error_TimeStartMin">Время начала должно быть ≥ 0</sys:String>
+    <sys:String x:Key="Error_TimeEndMin">Время окончания должно быть ≥ 1</sys:String>
+    <sys:String x:Key="Error_TimeEndAfterStart">Время окончания должно быть больше времени начала</sys:String>
+    <sys:String x:Key="Error_FixFields">Исправьте ошибки в полях ввода.</sys:String>
+    <sys:String x:Key="Error_Input">Ошибка ввода: {0}</sys:String>
+
+    <sys:String x:Key="Stat_Average">Среднее:</sys:String>
+    <sys:String x:Key="Stat_Max">Макс:</sys:String>
+    <sys:String x:Key="Stat_Min">Мин:</sys:String>
+
+    <sys:String x:Key="ProcessingMethod">Метод обработки</sys:String>
+    <sys:String x:Key="None">Нет</sys:String>
+    <sys:String x:Key="LowPass">Нижний фильтр</sys:String>
+    <sys:String x:Key="HighPass">Верхний фильтр</sys:String>
+    <sys:String x:Key="BandPass">Полосовой фильтр</sys:String>
+    <sys:String x:Key="BandStop">Заградительный фильтр</sys:String>
+    <sys:String x:Key="MovingAverage">Скользящее среднее</sys:String>
+    <sys:String x:Key="ExponentialSmoothing">Экспоненциальное сглаживание</sys:String>
+    <sys:String x:Key="FFT">БПФ</sys:String>
+    <sys:String x:Key="Normalization">Нормализация</sys:String>
+    <sys:String x:Key="Overlay">Наложение</sys:String>
+    <sys:String x:Key="LowPass_Cutoff">Граничная частота:</sys:String>
+    <sys:String x:Key="HighPass_Cutoff">Граничная частота:</sys:String>
+    <sys:String x:Key="BandPass_Range">Диапазон:</sys:String>
+    <sys:String x:Key="BandStop_Range">Подавляемый диапазон:</sys:String>
+    <sys:String x:Key="MovingAverage_Window">Размер окна:</sys:String>
+    <sys:String x:Key="MovingAverage_Units">отсчётов</sys:String>
+    <sys:String x:Key="ExponentialSmoothing_Alpha">Коэффициент сглаживания:</sys:String>
+    <sys:String x:Key="ExponentialSmoothing_Range">(0.0 - 1.0)</sys:String>
+    <sys:String x:Key="Hz">Гц</sys:String>
+    <sys:String x:Key="Samples">отсчётов</sys:String>
+    <sys:String x:Key="RangeSymbol">-</sys:String>
+
+
+    <sys:String x:Key="HistorySignals">История сигналов</sys:String>
+    <sys:String x:Key="Import">Импорт</sys:String>
+    <sys:String x:Key="Export">Экспорт</sys:String>
+    <sys:String x:Key="Show">Показать</sys:String>
+    <sys:String x:Key="Previous">Предыдущая</sys:String>
+    <sys:String x:Key="Next">Следующая</sys:String>
+    <sys:String x:Key="SignalsCount">Сигналы:</sys:String>
+    <sys:String x:Key="SignalName">Имя:</sys:String>
+    <sys:String x:Key="SignalTypeName">Тип:</sys:String>
+    <sys:String x:Key="SignalAmplitude">Амплитуда:</sys:String>
+    <sys:String x:Key="SignalFrequency">Частота:</sys:String>
+    <sys:String x:Key="SignalPhase">Фаза:</sys:String>
+    <sys:String x:Key="SignalPoints">Точек:</sys:String>
+    <sys:String x:Key="SignalStart">Начало:</sys:String>
+    <sys:String x:Key="SignalEnd">Конец:</sys:String>
+
 </ResourceDictionary>
