@@ -8,9 +8,9 @@
     <sys:String x:Key="Apply">Apply</sys:String>
     
     <sys:String x:Key="Name">Name</sys:String>
-    <sys:String x:Key="Amplitude_en">Amplitude</sys:String>
-    <sys:String x:Key="Frequency_en">Frequency, Hz</sys:String>
-    <sys:String x:Key="Phase_en">Phase, °</sys:String>
+    <sys:String x:Key="Amplitude">Amplitude</sys:String>
+    <sys:String x:Key="Frequency">Frequency, Hz</sys:String>
+    <sys:String x:Key="Phase">Phase, °</sys:String>
     <sys:String x:Key="Points">Points</sys:String>
     <sys:String x:Key="TimeStart">Start Time</sys:String>
     <sys:String x:Key="TimeEnd">End Time</sys:String>

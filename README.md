@@ -13,3 +13,7 @@
 - **База данных:** SQLite (Entity Framework Core)
 - **Логирование:** Serilog
 - **Тестирование:** xUnit + Moq
+
+---
+
+![Демонстрация](https://drive.google.com/file/d/1UCQE26-oV9j7SyO6NWiVf6KLxNzpjCf2/view?usp=sharing)
