@@ -7,9 +7,9 @@
 
 #### **Стек**
 
-**Язык:** C# / .NET 9
-**UI:** WPF
-**Графики:** LiveCharts2
-**База данных:** SQLite (Entity Framework Core)
-**Логирование:** Serilog
-**Тестирование:** xUnit + Moq
+- **Язык:** C# / .NET 9
+- **UI:** WPF
+- **График:** LiveCharts2
+- **База данных:** SQLite (Entity Framework Core)
+- **Логирование:** Serilog
+- **Тестирование:** xUnit + Moq
